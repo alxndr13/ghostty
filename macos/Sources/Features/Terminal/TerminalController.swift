@@ -1103,7 +1103,10 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
         }
 
         // Initialize sidebar tab manager
-        let tabManager = SidebarTabManager(window: window)
+        let tabManager = SidebarTabManager(
+            window: window,
+            bellTriggersAttention: ghostty.config.bellFeatures.contains(.attention)
+        )
         self.sidebarTabManager = tabManager
 
         // Create the terminal content view
@@ -1118,7 +1121,12 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
         terminalContainer.initialContentSize = focusedSurface?.initialSize
 
         // Create the sidebar hosting view
-        let sidebarHostingView = NSHostingView(rootView: SidebarView(tabManager: tabManager))
+        let sidebarHostingView = NSHostingView(rootView: SidebarView(
+            tabManager: tabManager,
+            activeTabColor: ghostty.config.sidebarActiveTabColor,
+            titleFontSize: ghostty.config.sidebarTitleFontSize,
+            subtitleFontSize: ghostty.config.sidebarSubtitleFontSize
+        ))
 
         // Build the split view: sidebar | terminal
         let splitView = NSSplitView()
@@ -1130,9 +1138,11 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
         splitView.setHoldingPriority(.defaultHigh, forSubviewAt: 1)
         splitView.delegate = self
 
-        // Set initial sidebar width
-        sidebarHostingView.frame = NSRect(x: 0, y: 0, width: 200, height: 400)
-        terminalContainer.frame = NSRect(x: 200, y: 0, width: 600, height: 400)
+        // Set initial sidebar width (synced across tabs via UserDefaults)
+        let savedWidth = UserDefaults.standard.double(forKey: "SidebarWidth")
+        let sidebarWidth = savedWidth > 0 ? min(max(savedWidth, 140), 280) : 200
+        sidebarHostingView.frame = NSRect(x: 0, y: 0, width: sidebarWidth, height: 400)
+        terminalContainer.frame = NSRect(x: sidebarWidth, y: 0, width: 600, height: 400)
 
         window.contentView = splitView
 
@@ -1221,6 +1231,20 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
         return proposedMaximumPosition
     }
 
+    func splitView(_ splitView: NSSplitView, shouldAdjustSizeOfSubview view: NSView) -> Bool {
+        // Keep the sidebar (first subview) fixed; only resize the terminal
+        return view != splitView.subviews.first
+    }
+
+    func splitViewDidResizeSubviews(_ notification: Notification) {
+        guard let splitView = notification.object as? NSSplitView,
+              let sidebar = splitView.subviews.first else { return }
+        let width = sidebar.frame.width
+        if width > 0 {
+            UserDefaults.standard.set(width, forKey: "SidebarWidth")
+        }
+    }
+
     // MARK: NSWindowDelegate
 
     // TabGroupCloseCoordinator.Controller
@@ -1280,7 +1304,19 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
         super.windowDidBecomeKey(notification)
         self.relabelTabs()
         self.fixTabBar()
+        self.syncSidebarWidth()
         terminalViewContainer?.updateGlassTintOverlay(isKeyWindow: true)
+    }
+
+    private func syncSidebarWidth() {
+        guard let splitView = window?.contentView as? NSSplitView,
+              let sidebar = splitView.subviews.first else { return }
+        let savedWidth = UserDefaults.standard.double(forKey: "SidebarWidth")
+        guard savedWidth > 0 else { return }
+        let targetWidth = min(max(savedWidth, 140), 280)
+        if abs(sidebar.frame.width - targetWidth) > 1 {
+            splitView.setPosition(targetWidth, ofDividerAt: 0)
+        }
     }
 
     override func windowDidResignKey(_ notification: Notification) {

@@ -1,52 +1,43 @@
-> **This is a personal fork of [Ghostty](https://github.com/ghostty-org/ghostty)** with a custom sidebar tab system for macOS. It is not affiliated with the upstream project. For the official Ghostty terminal, visit [ghostty.org](https://ghostty.org).
+> **Personal fork of [Ghostty](https://github.com/ghostty-org/ghostty)** with a sidebar tab system for macOS. Not affiliated with the upstream project. For the official Ghostty terminal, visit [ghostty.org](https://ghostty.org).
 
-## Fork Changes
+## Sidebar
 
-This fork replaces the native macOS tab bar with a left vertical sidebar that shows richer tab information:
+Replaces the native tab bar with a left sidebar showing rich tab cards:
 
-- **Sidebar tab cards** — title, working directory, git branch, and custom status entries
-- **Built-in git branch** — detected automatically from `.git/HEAD`, no shell hooks needed
-- **IPC socket** — Unix domain socket at `/tmp/ghostty-{uid}.sock` for external control
-- **CLI tool (`ghosttyctl`)** — rename tabs, send notifications, set custom status metadata
-- **Drag-and-drop reordering** — reorder tabs by dragging within the sidebar
-- **Attention indicators** — orange dot on tabs with unread bell or IPC notifications
-- **Theme-derived colors** — sidebar colors computed from terminal background/foreground
-- **Configurable fields** — choose which info to show via `sidebar-fields` config
+- **Title, directory, git branch** — git branch detected automatically, no setup needed
+- **Custom status entries** — show ports, environments, or any metadata via CLI
+- **Attention indicators** — orange dot on tabs with notifications or bell
+- **Drag-and-drop** — reorder tabs by dragging
+- **Theme-aware** — colors derived from your terminal theme
 
 ### Config
 
 ```
-# Which fields to show (comma-separated, default: all)
+# Choose which fields to show (default: all)
 sidebar-fields = title,directory,git-branch,status
 ```
 
-Colors are derived automatically from your terminal theme.
+### CLI
 
-### CLI: `ghosttyctl`
-
-Installed at `~/.local/bin/ghosttyctl` (symlink from `cli/ghosttyctl`).
+Install: symlink `cli/ghosttyctl` to somewhere on your PATH (e.g. `~/.local/bin/ghosttyctl`).
 
 ```bash
-ghosttyctl rename "Tab Name"                              # rename current tab
-ghosttyctl notify --title "Done" --body "Build finished"  # macOS notification + attention dot
-ghosttyctl set-status server "localhost:3000" --icon network  # custom sidebar metadata
-ghosttyctl clear-status server                            # remove metadata
-ghosttyctl list                                           # list all tabs (JSON)
-ghosttyctl current                                        # current tab info (JSON)
+ghosttyctl rename "My Tab"                                    # rename tab
+ghosttyctl notify --title "Done" --body "Build finished"      # send notification
+ghosttyctl set-status server "localhost:3000" --icon network  # add status entry
+ghosttyctl clear-status server                                # remove it
+ghosttyctl list                                               # list all tabs
+ghosttyctl current                                            # current tab info
 ```
 
-Environment variables `GHOSTTY_SOCKET` and `GHOSTTY_TAB_ID` are injected into every terminal session.
+### Claude Code
 
-### Claude Code Integration
-
-Add these instructions to your `~/.claude/CLAUDE.md` so Claude Code can use the sidebar:
+Add to your `~/.claude/CLAUDE.md` so Claude Code can name its tabs and set status:
 
 ```markdown
-- Rename the workspace using: `ghosttyctl rename "Claude: <name>"`. Name it after the specific work being done.
-- You can set custom sidebar status entries using `ghosttyctl set-status <key> <value> [--icon <sf-symbol>]` and clear with `ghosttyctl clear-status <key>`.
+- Rename the workspace using: `ghosttyctl rename "Claude: <name>"`. Name it after the work being done.
+- Set sidebar status entries using `ghosttyctl set-status <key> <value> [--icon <sf-symbol>]` and clear with `ghosttyctl clear-status <key>`.
 ```
-
-Claude Code will then automatically rename tabs and set status context as it works.
 
 ---
 

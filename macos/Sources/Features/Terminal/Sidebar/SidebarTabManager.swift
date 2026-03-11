@@ -90,6 +90,9 @@ class SidebarTabManager: ObservableObject {
                 let hasBell = notification.userInfo?[Notification.Name.terminalWindowHasBellKey] as? Bool ?? false
                 if hasBell {
                     self.markAttention(window: w)
+                } else {
+                    self.clearAttention(for: ObjectIdentifier(w))
+                    self.refresh()
                 }
             }
             observers.append(bellObserver)

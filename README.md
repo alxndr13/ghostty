@@ -1,7 +1,9 @@
-**Personal fork of [Tom Reinhardt's ghostty sidebar fork](https://github.com/tomreinert/ghostty)** with additional features. Not affiliated with the upstream project. For the official Ghostty terminal, visit [ghostty.org](https://ghostty.org).
+**Personal fork of [Tom Reinert's ghostty sidebar fork](https://github.com/tomreinert/ghostty)** with additional features. Not affiliated with the upstream project. For the official Ghostty terminal, visit [ghostty.org](https://ghostty.org).
 
 🧪 **Experimental**
 Built on top of Tom's sidebar work. Use at your own risk.
+
+Huge thanks to [Tom Reinert](https://github.com/tomreinert) for starting this fork — the sidebar concept is fantastic and I'm very glad he built it.
 
 ## What's new in this fork
 

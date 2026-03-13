@@ -1,7 +1,12 @@
-**Personal fork of [Ghostty](https://github.com/ghostty-org/ghostty)** with a sidebar tab system for macOS. Not affiliated with the upstream project. For the official Ghostty terminal, visit [ghostty.org](https://ghostty.org).
+**Personal fork of [Tom Reinhardt's ghostty sidebar fork](https://github.com/tomreinert/ghostty)** with additional features. Not affiliated with the upstream project. For the official Ghostty terminal, visit [ghostty.org](https://ghostty.org).
 
-🧪 **Experimental**  
-Please note that this is experimental and I built it for my own use. It works fine for me, but feel free and try to break it.
+🧪 **Experimental**
+Built on top of Tom's sidebar work. Use at your own risk.
+
+## What's new in this fork
+
+- **Collapsible sidebar** — press Cmd+S (or View > Toggle Sidebar) to collapse the sidebar to a thin 6pt indicator strip. Click the strip or press Cmd+S again to expand.
+- **Terminal-native theme** — sidebar background matches your terminal background color exactly, for a seamless look.
 
 🐛 **Known bugs**  
 ~~- Unread indicator does not clear correctly, and might re-appear when switching tabs~~

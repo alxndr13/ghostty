@@ -373,7 +373,11 @@ class BaseTerminalController: NSWindowController,
 
     /// Prompt the user to change the tab/window title.
     func promptTabTitle() {
-        guard let window else { return }
+        guard let window else {
+            print("[DEBUG promptTabTitle] window is nil, bailing")
+            return
+        }
+        print("[DEBUG promptTabTitle] presenting sheet on window: \(window), title=\(window.title), isKey=\(window.isKeyWindow), isVisible=\(window.isVisible)")
 
         let alert = NSAlert()
         alert.messageText = "Change Tab Title"
@@ -1325,6 +1329,17 @@ class BaseTerminalController: NSWindowController,
     }
 
     @IBAction func changeTabTitle(_ sender: Any) {
+        print("[DEBUG changeTabTitle] window=\(String(describing: window)), isKey=\(window?.isKeyWindow ?? false), isMain=\(window?.isMainWindow ?? false)")
+
+        // When the sidebar is active the native tab bar is hidden, so inline
+        // editing would start in a hidden view and immediately cancel.
+        // Skip straight to the alert-based prompt.
+        if let terminalWindow = window as? TerminalWindow, terminalWindow.sidebarActive {
+            print("[DEBUG changeTabTitle] sidebarActive=true, using promptTabTitle()")
+            promptTabTitle()
+            return
+        }
+
         if let targetWindow = window {
             let inlineHostWindow =
                 targetWindow.tabbedWindows?

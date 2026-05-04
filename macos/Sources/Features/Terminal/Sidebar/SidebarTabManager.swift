@@ -175,6 +175,9 @@ class SidebarTabManager: ObservableObject {
         }
 
         let selectedWindow = window.tabGroup?.selectedWindow ?? window
+        // Clear attention for whichever window is currently selected — covers
+        // native tab switching (Cmd+1, native tab bar) that bypasses selectTab.
+        attentionWindows.remove(ObjectIdentifier(selectedWindow))
         let metadataStore = TabMetadataStore.shared
 
         let newTabs = tabWindows.map { w -> TabItem in

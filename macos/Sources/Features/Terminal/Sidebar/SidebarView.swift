@@ -224,10 +224,10 @@ private struct SidebarTabCard: View {
                 if fields.contains(.title) {
                     HStack(spacing: 6) {
                         Text(tab.displayTitle)
-                            .font(.system(size: 12, weight: tab.isSelected ? .semibold : .regular))
+                            .font(.system(size: 14, weight: tab.isSelected ? .semibold : .regular))
                             .lineLimit(1)
                             .truncationMode(.tail)
-                            .foregroundColor(tab.isSelected ? theme.foreground : theme.secondaryText)
+                            .foregroundColor(theme.foreground.opacity(tab.isSelected ? 0.95 : 0.75))
 
                         Spacer()
 
@@ -243,10 +243,10 @@ private struct SidebarTabCard: View {
                 if fields.contains(.directory), let dir = tab.directoryName {
                     HStack(spacing: 4) {
                         Image(systemName: "folder")
-                            .font(.system(size: 9))
+                            .font(.system(size: 11))
                             .foregroundColor(theme.secondaryText)
                         Text(dir)
-                            .font(.system(size: 10))
+                            .font(.system(size: 12))
                             .foregroundColor(theme.secondaryText)
                             .lineLimit(1)
                     }
@@ -256,10 +256,10 @@ private struct SidebarTabCard: View {
                 if fields.contains(.gitBranch), let branch = tab.gitBranch {
                     HStack(spacing: 4) {
                         Image(systemName: "arrow.triangle.branch")
-                            .font(.system(size: 9))
+                            .font(.system(size: 11))
                             .foregroundColor(theme.secondaryText)
                         Text(branch)
-                            .font(.system(size: 10))
+                            .font(.system(size: 12))
                             .foregroundColor(theme.secondaryText)
                             .lineLimit(1)
                     }
@@ -271,11 +271,11 @@ private struct SidebarTabCard: View {
                         HStack(spacing: 4) {
                             if let icon = entry.icon {
                                 Image(systemName: icon)
-                                    .font(.system(size: 9))
+                                    .font(.system(size: 11))
                                     .foregroundColor(theme.secondaryText)
                             }
                             Text(entry.value)
-                                .font(.system(size: 10))
+                                .font(.system(size: 12))
                                 .foregroundColor(theme.secondaryText)
                                 .lineLimit(1)
                         }

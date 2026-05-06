@@ -663,13 +663,12 @@ extension Ghostty {
                 return event
             }
 
-            // If our window/app is already focused, then this click is only
-            // being used to transfer split focus. Consume it so it does not
-            // get forwarded to the terminal as a mouse click.
+            // If our window/app is already focused, transfer split focus to
+            // this surface but let the click continue so click-drag text
+            // selection works on the first click into an unfocused split.
             if NSApp.isActive && window.isKeyWindow {
                 window.makeFirstResponder(self)
-                suppressNextLeftMouseUp = true
-                return nil
+                return event
             }
 
             // Make ourselves the first responder

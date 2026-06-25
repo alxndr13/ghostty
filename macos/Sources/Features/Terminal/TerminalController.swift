@@ -1163,7 +1163,7 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
 
         // Set initial sidebar width (synced across tabs via UserDefaults)
         let savedWidth = UserDefaults.standard.double(forKey: "SidebarWidth")
-        let sidebarWidth = savedWidth > 0 ? min(max(savedWidth, 140), 280) : 200
+        let sidebarWidth = savedWidth > 0 ? min(max(savedWidth, Self.sidebarMinWidth), Self.sidebarMaxWidth) : 200
         sidebarHostingView.frame = NSRect(x: 0, y: 0, width: sidebarWidth, height: 400)
         terminalContainer.frame = NSRect(x: sidebarWidth, y: 0, width: 600, height: 400)
 
@@ -1251,6 +1251,10 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
 
     private static let indicatorWidth: CGFloat = 6
 
+    /// The resize bounds for the sidebar, in points.
+    private static let sidebarMinWidth: CGFloat = 140
+    private static let sidebarMaxWidth: CGFloat = 400
+
     @objc func toggleSidebarVisibility(_ sender: Any) {
         guard let splitView = window?.contentView as? NSSplitView else { return }
 
@@ -1302,7 +1306,7 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
         splitView.addSubview(sidebarHostingView, positioned: .below, relativeTo: secondView)
 
         let savedWidth = UserDefaults.standard.double(forKey: "SidebarWidth")
-        let targetWidth = savedWidth > 0 ? min(max(savedWidth, 140), 280) : 200
+        let targetWidth = savedWidth > 0 ? min(max(savedWidth, Self.sidebarMinWidth), Self.sidebarMaxWidth) : 200
 
         if animated {
             NSAnimationContext.runAnimationGroup { ctx in
@@ -1351,12 +1355,12 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
     // MARK: NSSplitViewDelegate
 
     func splitView(_ splitView: NSSplitView, constrainMinCoordinate proposedMinimumPosition: CGFloat, ofSubviewAt dividerIndex: Int) -> CGFloat {
-        if dividerIndex == 0 { return sidebarCollapsed ? Self.indicatorWidth : 140 }
+        if dividerIndex == 0 { return sidebarCollapsed ? Self.indicatorWidth : Self.sidebarMinWidth }
         return proposedMinimumPosition
     }
 
     func splitView(_ splitView: NSSplitView, constrainMaxCoordinate proposedMaximumPosition: CGFloat, ofSubviewAt dividerIndex: Int) -> CGFloat {
-        if dividerIndex == 0 { return sidebarCollapsed ? Self.indicatorWidth : 280 }
+        if dividerIndex == 0 { return sidebarCollapsed ? Self.indicatorWidth : Self.sidebarMaxWidth }
         return proposedMaximumPosition
     }
 
@@ -1445,7 +1449,7 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
               let sidebar = splitView.subviews.first else { return }
         let savedWidth = UserDefaults.standard.double(forKey: "SidebarWidth")
         guard savedWidth > 0 else { return }
-        let targetWidth = min(max(savedWidth, 140), 280)
+        let targetWidth = min(max(savedWidth, Self.sidebarMinWidth), Self.sidebarMaxWidth)
         if abs(sidebar.frame.width - targetWidth) > 1 {
             splitView.setPosition(targetWidth, ofDividerAt: 0)
         }
